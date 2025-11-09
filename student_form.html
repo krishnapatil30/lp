@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Form</title>
+    <link rel="stylesheet" href="styles1.css">
+</head>
+<body>
+    <h1>Student Registration Form for Elective Subject</h1>
+
+    <form action="#" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="rollno">Roll Number:</label>
+        <input type="text" id="rollno" name="rollno" required>
+
+        <label for="div">Division:</label>
+        <input type="text" id="div" name="div" required>
+
+        <label for="class">Class:</label>
+        <input type="text" id="class" name="class" required>
+
+        <label for="year">Year:</label>
+        <select id="year" name="year" required>
+            <option value="">-- Select Year --</option>
+            <option value="First Year">First Year</option>
+            <option value="Second Year">Second Year</option>
+            <option value="Third Year">Third Year</option>
+            <option value="Final Year">Final Year</option>
+        </select>
+
+        <label for="contact">Contact Number:</label>
+        <input type="tel" id="contact" name="contact" pattern="[0-9]{10}" placeholder="Enter 10-digit number" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="example@gmail.com" required>
+
+        <label for="subject">Select Elective Subject:</label>
+        <select id="subject" name="subject" required>
+            <option value="">-- Select Subject --</option>
+            <option value="IOT">IOT</option>
+            <option value="HCI">HCI</option>
+        </select>
+
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>

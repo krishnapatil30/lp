@@ -1,0 +1,18 @@
+Imports System
+Imports addm   ' DLL चं नाव (module addm.dll)
+
+Public Class calc
+    Public Shared Sub Main()
+        Dim a, b As Integer
+        Console.Write("Enter first number: ")
+        a = Console.ReadLine()
+        Console.Write("Enter second number: ")
+        b = Console.ReadLine()
+
+        Console.WriteLine()
+        Console.WriteLine("Addition = " & add(a, b))
+        Console.WriteLine("Subtraction = " & subt(a, b))
+        Console.WriteLine("Multiplication = " & mul(a, b))
+        Console.WriteLine("Division = " & div(a, b))
+    End Sub
+End Class
