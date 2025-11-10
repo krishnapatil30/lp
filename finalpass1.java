@@ -1,10 +1,9 @@
-
-          import java.util.*;
+import java.util.*;
 
 class Pass1 {
     public static void main(String args[]) {
 
-        // Input Assembly Code (contains literal)
+        // Assembly Input
         String program[][] = {
             {"START", "100"},
             {"AGAIN", "MOVER", "AREG", "=5"},
@@ -15,12 +14,30 @@ class Pass1 {
             {"END"}
         };
 
+        // MOT (Mnemonic Opcode Table)
+        Map<String, String> MOT = new HashMap<>();
+        MOT.put("MOVER", "IS,04");
+        MOT.put("ADD", "IS,01");
+        MOT.put("MOVEM", "IS,05");
+        MOT.put("START", "AD,01");
+        MOT.put("END", "AD,02");
+        MOT.put("DS", "DL,02");
+        MOT.put("DC", "DL,01");
+
+        // Register Table
+        Map<String, String> REG = new HashMap<>();
+        REG.put("AREG", "1");
+        REG.put("BREG", "2");
+        REG.put("CREG", "3");
+        REG.put("DREG", "4");
+
         Map<String, Integer> SYMTAB = new LinkedHashMap<>();
         List<String> LITTAB = new ArrayList<>();
         List<Integer> LITADDR = new ArrayList<>();
         List<Integer> POOLTAB = new ArrayList<>();
-        POOLTAB.add(0); // First literal pool start index
+        POOLTAB.add(0);
 
+        List<String> IC = new ArrayList<>();
         int LC = 0;
 
         System.out.println("\nPASS 1 PROCESSING...\n");
@@ -28,18 +45,21 @@ class Pass1 {
         // START
         if (program[0][0].equals("START")) {
             LC = Integer.parseInt(program[0][1]);
-            System.out.println("LC initialized to: " + LC);
+            IC.add("(AD,01) (C," + LC + ")");
         }
 
         for (int i = 1; i < program.length; i++) {
 
-            // END → Assign literal addresses
             if (program[i][0].equals("END")) {
-                for (int k = POOLTAB.get(POOLTAB.size() - 1); k < LITTAB.size(); k++) {
+
+                // Assign literal addresses
+                for (int k = POOLTAB.get(POOLTAB.size()-1); k < LITTAB.size(); k++) {
                     LITADDR.add(LC);
                     LC++;
                 }
                 POOLTAB.add(LITTAB.size());
+
+                IC.add("(AD,02)");
                 break;
             }
 
@@ -50,32 +70,37 @@ class Pass1 {
 
             String opcode = program[i][1];
 
-            // If DS
+            // DS / DC
             if (opcode.equals("DS")) {
+                IC.add("(DL,02) (C," + program[i][2] + ")");
                 LC += Integer.parseInt(program[i][2]);
             }
-            // If DC
             else if (opcode.equals("DC")) {
+                IC.add("(DL,01) (C," + program[i][2] + ")");
                 LC++;
             }
-            // Normal instruction
             else {
-                // Check operand safely
-                if (program[i].length > 3) {
-                    String operand = program[i][3];
+                // Instruction
+                String opClass = MOT.get(opcode);
+                String reg = REG.get(program[i][2]);
+                String operand = program[i][3];
 
-                    // If operand is literal
-                    if (operand.startsWith("=")) {
-                        if (!LITTAB.contains(operand)) {
-                            LITTAB.add(operand);
-                        }
+                if (operand.startsWith("=")) {
+                    if (!LITTAB.contains(operand)) {
+                        LITTAB.add(operand);
                     }
+                    IC.add("(" + opClass + ") (" + reg + ") (L," + (LITTAB.indexOf(operand)) + ")");
                 }
+                else {
+                    IC.add("(" + opClass + ") (" + reg + ") (S," + operand + ")");
+                }
+
                 LC++;
             }
         }
 
-        // OUTPUTS
+        // OUTPUT
+
         System.out.println("\n******** SYMBOL TABLE ********");
         System.out.println("Symbol\tAddress");
         for (String s : SYMTAB.keySet()) {
@@ -94,7 +119,14 @@ class Pass1 {
             System.out.println((i+1) + "\t" + POOLTAB.get(i));
         }
 
+        System.out.println("\n******** INTERMEDIATE CODE ********");
+        for (String s : IC) {
+            System.out.println(s);
+        }
+
         System.out.println("\nPASS 1 Completed Successfully.\n");
     }
 }
 
+         
+           
